@@ -1,0 +1,21 @@
+# /etc/mkinitcpio.d/linux-uki.preset
+
+ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/usr/lib/modules/$(uname -r)/vmlinuz"
+
+##########################
+# 1. Default UKI Preset
+##########################
+PRESETS=('default' 'fallback')
+
+default_uki="/boot/efi/EFI/Linux/arch-linux.efi"
+default_options="--cmdline /etc/kernel/cmdline"
+
+##########################
+# 2. Fallback Preset (non-UKI)
+##########################
+fallback_image="/boot/initramfs-linux-fallback.img"
+fallback_options="--no-compress"
+
+fallback_kernel="/boot/vmlinuz-linux"
+fallback_initrd="/boot/initramfs-linux.img"
