@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 # Arch Linux m18 Setup - Mount and Prep Starter Script
 # Use this script during installation or recovery from a live Arch USB
@@ -12,7 +12,7 @@ set -euo pipefail
 ROOT_PART="/dev/nvme1n1p1"       # Btrfs root with subvolumes
 HOME_PART="/dev/nvme1n1p2"       # Separate ext4 partition for /home
 EFI_PART="/dev/nvme0n1p1"        # FAT32 ESP for UEFI bootloader (on separate drive)
-EXT_BACKUP_PART="/dev/sda1"      # Optional external NTFS backup disk
+EXT_BACKUP_PART="/dev/sdXn"      # Optional external NTFS backup disk
 
 # === Mount Point Base ===
 MNT="/mnt"
@@ -20,24 +20,24 @@ MNT="/mnt"
 # === Mount Flags ===
 # noatime: improves SSD longevity by avoiding frequent metadata writes
 # compress=zstd: compression for btrfs subvolumes
-BTRFS_OPTS="noatime,compress=zstd"
+BTRFS_OPTS="noatime,space_cache=v2,ssd,compress=zstd"
 
 # Create necessary directories
 mkdir -p "$MNT"
 mkdir -p "$MNT/boot/efi"
 mkdir -p "$MNT/home"
 mkdir -p "$MNT/.snapshots"
-mkdir -p "$MNT/scaredDocs"
+mkdir -p "$MNT/scaredData"
 mkdir -p "$MNT/var/cache/pacman/pkg"
 mkdir -p "$MNT/var/log"
 mkdir -p "$MNT/tmp"
 
-echo "Mounting root subvolume..."
-mount -o subvol=@,"$BTRFS_OPTS" "$ROOT_PART" "$MNT"
+echo `ls -a $MNT`
 
 echo "Mounting additional subvolumes..."
+mount -o subvol=@,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/"
 mount -o subvol=@snapshots,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/.snapshots"
-mount -o subvol=@scaredDocs,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/scaredDocs"
+mount -o subvol=@scaredData,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/scaredData"
 mount -o subvol=@pkg,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/var/cache/pacman/pkg"
 mount -o subvol=@log,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/var/log"
 mount -o subvol=@tmp,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/tmp"
@@ -64,3 +64,5 @@ fi
 echo ""
 echo "All mounts complete. You may now chroot with:"
 echo "arch-chroot /mnt"
+
+

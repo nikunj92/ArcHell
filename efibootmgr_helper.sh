@@ -17,7 +17,7 @@ show_boot_entries() {
 create_arch_entry() {
   local esp_dev="${1:-/dev/nvme0n1p1}"  # Default ESP location
   local esp_path="${2:-/boot/efi}"      # Default mountpoint
-  local label="${3:-Arch Linux}"        # Default label
+  local label="${3:-Satyanet Arch-Linux}"        # Default label
   local loader="${4:-/EFI/Linux/arch-linux.efi}"  # Default UKI path
   
   echo "Creating UEFI boot entry for $label"
@@ -65,7 +65,9 @@ install_systemd_boot() {
 }
 
 # Show bootctl status
-  #bootctl status
+bootctl_status() {
+  bootctl status
+}
 
 # === Script Usage ===
 if [[ $# -lt 1 ]]; then

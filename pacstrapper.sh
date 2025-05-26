@@ -41,20 +41,22 @@ CPU_MICROCODE=(
 
 # Graphics - Intel + NVIDIA hybrid support with Vulkan and VA-API
 GPU_PACKAGES=(
-  mesa vulkan-intel libva-intel-driver libva-utils
-  nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings
-  nvidia-prime nvidia-vulkan-utils nvtools vulkan-tools
+  mesa 
+  vulkan-intel vulkan-tools vulkan-icd-loader
+  libva-intel-driver libva-utils
+  nvidia-dkms nvidia-utils nvidia-settings
+  nvidia-prime egl-wayland
   intel-gpu-tools
 )
 
 # Audio stack - SOF firmware and PipeWire system
 AUDIO_PACKAGES=(
-  sof-firmware alsa-ucm-conf alsa-utils pipewire wireplumber
+  sof-firmware alsa-ucm-conf alsa-utils pipewire wireplumber pipewire-pulse
 )
 
 # Bluetooth support
 BLUETOOTH_PACKAGES=(
-  bluez bluez-utils bluedevil
+  bluez bluez-utils
 )
 
 # Networking - systemd-integrated and wireless daemon
@@ -65,7 +67,7 @@ NETWORK_PACKAGES=(
 # Utilities - must-have tools and manual pages
 UTILITY_PACKAGES=(
   git sudo vim efibootmgr dosfstools man-db man-pages
-  lsof rsync htop unzip tar
+  lsof rsync htop unzip tar reflector
 )
 
 # Combine all package arrays
