@@ -2,22 +2,22 @@
 
 # Secure Boot KeyTool Helper for Arch Linux (Alienware m18)
 # - Installs KeyTool.efi
-# - Converts your .crt into .auth for key enrollment
+# - Converts the .crt into .auth for key enrollment
 # - Helps you copy it to ESP or USB
 # - Explains usage in firmware
 
 set -euo pipefail
 
-KEY_DIR="/root/secureboot"
+KEY_DIR="/boot/efi/loader/keys"
 EFI_TOOLS_DIR="/boot/efi/EFI/tools"
 USB_MOUNT="/mnt/usb"
 
 KEYTOOL_SRC="/usr/lib/efitools/x86_64/KeyTool.efi"
-SIGLIST="${KEY_DIR}/db.esl"
-AUTHFILE="${KEY_DIR}/db.auth"
-CERT="${KEY_DIR}/db.crt"
-KEY="${KEY_DIR}/db.key"
-EFI_GUID="deadbeef-dead-beef-dead-beefdeadbeef"  # Replace if desired
+SIGLIST="${KEY_DIR}/satyarch.esl"
+AUTHFILE="${KEY_DIR}/satyarch.auth"
+CERT="${KEY_DIR}/satyarch.crt"
+KEY="${KEY_DIR}/satyarch.key"
+EFI_GUID=70fa8b89-1c35-4bfc-9888-52c85ac740db
 
 # Check if running as root
 if [[ $EUID -ne 0 ]]; then
@@ -67,10 +67,10 @@ make_auth_file() {
   mkdir -p "$KEY_DIR"
 
   # 1. Generate EFI Signature List (ESL)
-  cert-to-efi-sig-list "$CERT" "$SIGLIST"
+  cert-to-efi-sig-list -g "$EFI_GUID" "$CERT" "$SIGLIST"
 
   # 2. Sign ESL into AUTH file
-  sign-efi-sig-list -k "$KEY" -c "$CERT" db "$SIGLIST" "$AUTHFILE" "$EFI_GUID"
+  sign-efi-sig-list -k "$KEY" -c "$CERT" -g "$EFI_GUID" db "$SIGLIST" "$AUTHFILE"
 
   echo "Created:"
   echo "  ESL:  $SIGLIST"
@@ -104,14 +104,14 @@ copy_to_usb() {
 
 usage_instructions() {
   echo
-  echo "HOW TO USE KeyTool.efi (for enrolling your Secure Boot key):"
+  echo "HOW TO USE KeyTool.efi (for enrolling a Secure Boot key):"
   echo "1. Reboot and press F2 (Alienware) to access UEFI setup menu."
   echo "2. Choose USB or internal ESP entry: EFI/tools/KeyTool.efi"
   echo "3. Inside KeyTool:"
   echo "   - Choose 'Edit Keys'"
   echo "   - Navigate to 'db' → 'Replace' or 'Append'"
-  echo "   - Load your signed AUTH file (db.auth)"
-  echo "4. Save and reboot. Your Secure Boot DB will now trust your key."
+  echo "   - Load a signed AUTH file (db.auth)"
+  echo "4. Save and reboot. Secure Boot DB will now trust the key."
   echo
   echo "TIP: If KeyTool refuses to load, verify UEFI is in Setup Mode or enroll via MokManager"
 }

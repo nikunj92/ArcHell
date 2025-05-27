@@ -17,7 +17,7 @@ Areas for Attention & Suggestions:
 Destructive Operations:
 The partitions.sh script is highly destructive. While it has warnings, ensure you are absolutely certain about the TARGET_DISK before running it. Double-check device names in the live environment (lsblk).
 UUID Placeholders:
-The file satyanet-fallback.conf contains root=UUID=<your-root-uuid>. This must be manually updated with the correct UUID after the root partition is formatted.
+The file satyanet-fallback.conf contains root=UUID=<root-uuid>. This must be manually updated with the correct UUID after the root partition is formatted.
 Similarly, ensure the /etc/kernel/cmdline file (which will be used by the UKI preset dotfiles/linux-uki.preset) is created in the chroot environment with the correct root=UUID=... and other parameters like rootflags=subvol=@ rw.
 User-Specific Details:
 sessionctl.sh is hardcoded for the user nikunj.

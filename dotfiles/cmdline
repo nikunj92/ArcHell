@@ -1,0 +1,1 @@
+root=UUID=f11557de-8f02-4d72-8a70-48c7dc965095 rootflags=subvol=@ rw quiet splash loglevel=3 bgrt_disable=1 nvidia-drm.modeset=1 nvidia-drm.fbdev=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1

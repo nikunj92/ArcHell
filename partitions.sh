@@ -6,6 +6,10 @@
 set -e  # Exit on any error
 
 LOG_DIR=
+if [ ! -e $LOG_DIR]; then
+    echo "Missing log directory: $LOG_DIR"
+    exit 1
+fi
 exec > >(tee -a $LOG_DIR/disk_setup.log) 2>&1
 # Colors for output
 RED='\033[0;31m'
@@ -27,7 +31,7 @@ echo "----------------------------------------"
 echo -e "${YELLOW}This script will:${NC}"
 echo "  1. Create partitions on ${TARGET_DISK}"
 echo "  2. Format root partition (${ROOT_PART}) with Btrfs"
-echo "  3. Create Btrfs subvolumes (@, @snapshots, @scaredDocs, @pkg, @log, @tmp)"
+echo "  3. Create Btrfs subvolumes (@, @snapshots, @sacredData, @pkg, @log, @tmp)"
 echo "  4. Format home partition (${HOME_PART}) with ext4"
 echo -e "${RED}WARNING: ALL DATA ON ${TARGET_DISK} WILL BE DESTROYED!${NC}"
 echo
@@ -88,7 +92,7 @@ mount "$ROOT_PART" "$MOUNT_POINT"
 # Create subvolumes
 btrfs subvolume create "$MOUNT_POINT/@"
 btrfs subvolume create "$MOUNT_POINT/@snapshots"
-btrfs subvolume create "$MOUNT_POINT/@scaredData"
+btrfs subvolume create "$MOUNT_POINT/@sacredData"
 btrfs subvolume create "$MOUNT_POINT/@pkg"
 btrfs subvolume create "$MOUNT_POINT/@log"
 btrfs subvolume create "$MOUNT_POINT/@tmp"
@@ -108,7 +112,7 @@ echo "  - ${HOME_PART} : ext4 home partition"
 echo -e "\n${GREEN}Btrfs subvolumes created:${NC}"
 echo "  - @ : System root"
 echo "  - @snapshots : Base system snapshots"
-echo "  - @scaredDocs : Sensitive data"
+echo "  - @sacredData : Sensitive data"
 echo "  - @pkg : Package cache"
 echo "  - @log : System logs"
 echo "  - @tmp : Temp files"

@@ -3,19 +3,24 @@
 ALL_config="/etc/mkinitcpio.conf"
 ALL_kver="/usr/lib/modules/$(uname -r)/vmlinuz"
 
-##########################
-# 1. Default UKI Preset
-##########################
-PRESETS=('default' 'fallback')
-
-default_uki="/boot/efi/EFI/Linux/arch-linux.efi"
-default_options="--cmdline /etc/kernel/cmdline"
+PRESETS=('uki' 'default' 'fallback')
 
 ##########################
-# 2. Fallback Preset (non-UKI)
+# 1. UKI Preset
 ##########################
-fallback_image="/boot/initramfs-linux-fallback.img"
-fallback_options="--no-compress"
+uki_uki="/boot/efi/EFI/Linux/arch-linux.efi"
+uki_options="--cmdline /etc/kernel/cmdline --splash /usr/share/systemd/bootctl/splash-arch.bmp"
 
+##########################
+# 2. Default Preset (standard Arch)
+##########################
+default_kernel="/boot/vmlinuz-linux"
+default_initrd="/boot/initramfs-linux.img"
+default_options="--splash /usr/share/systemd/bootctl/splash-arch.bmp"
+
+##########################
+# 3. Fallback Preset (standard fallback)
+##########################
 fallback_kernel="/boot/vmlinuz-linux"
-fallback_initrd="/boot/initramfs-linux.img"
+fallback_initrd="/boot/initramfs-linux-fallback.img"
+fallback_options="-S autodetect"

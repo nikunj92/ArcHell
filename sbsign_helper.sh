@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Arch Linux Secure Boot Signing Helper
-# Signs a .efi file (like a UKI or systemd-boot binary) with your custom keys
+# Signs a .efi file (like a UKI or systemd-boot binary) with custom keys
 
 set -euo pipefail
 
 # === CONFIGURATION ===
-KEY_DIR="/root/secureboot"
-CERT="${KEY_DIR}/db.crt"
-KEY="${KEY_DIR}/db.key"
+KEY_DIR="/boot/efi/loader/keys"
+CERT="${KEY_DIR}/satyarch.crt"
+KEY="${KEY_DIR}/satyarch.key"
 
 # Default input/output — override via CLI
 DEFAULT_INPUT="/boot/efi/EFI/Linux/arch-linux.efi"

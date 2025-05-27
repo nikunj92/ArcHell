@@ -20,7 +20,7 @@ create_snapshot() {
   btrfs subvolume snapshot -r / "${SNAPSHOT_DIR}/${snap_name}"
   
   echo "Snapshot created at: ${SNAPSHOT_DIR}/${snap_name}"
-  prune_old_snapshots
+  #prune_old_snapshots
 }
 
 list_snapshots() {

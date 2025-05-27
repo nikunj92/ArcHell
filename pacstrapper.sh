@@ -12,7 +12,8 @@ MNT="/mnt"
 
 # Ensure mount point exists and is mounted
 if [ ! -d "$MNT" ]; then
-  echo "Error: $MNT does not exist. Did you mount your target partitions?"
+  echo "Error: $MNT does not exist. Please create the mount point first."
+  echo "   Hint: Use the mounter.sh script to prepare your filesystems."
   exit 1
 fi
 
@@ -45,8 +46,9 @@ GPU_PACKAGES=(
   vulkan-intel vulkan-tools vulkan-icd-loader
   libva-intel-driver libva-utils
   nvidia-dkms nvidia-utils nvidia-settings
-  nvidia-prime egl-wayland
+  nvidia-prime egl-wayland libva-nvidia-driver # Added libva-nvidia-driver
   intel-gpu-tools
+  xorg-xwayland # For X11 app compatibility in Wayland
 )
 
 # Audio stack - SOF firmware and PipeWire system
@@ -64,10 +66,23 @@ NETWORK_PACKAGES=(
   networkmanager iwd
 )
 
+# Wayland Session Packages (Plasma)
+WAYLAND_SESSION_PACKAGES=(
+  plasma-wayland-session kde-cli-tools kscreen qt5-wayland qt6-wayland
+)
+
+# Font packages
+FONT_PACKAGES=(
+  ttf-dejavu ttf-liberation noto-fonts noto-fonts-emoji
+  # xorg-mkfontscale xorg-mkfontdir # These are for X11 font server, less critical for Wayland directly
+  # xorg-fonts-misc # Also more X11 specific, Noto/DejaVu/Liberation are good modern choices
+)
+
 # Utilities - must-have tools and manual pages
 UTILITY_PACKAGES=(
   git sudo vim efibootmgr dosfstools man-db man-pages
-  lsof rsync htop unzip tar reflector
+  lsof rsync htop unzip tar reflector bash-completion
+  wget curl ntp terminus-fonts
 )
 
 # Combine all package arrays
@@ -77,6 +92,8 @@ ALL_PACKAGES=(
   "${GPU_PACKAGES[@]}"
   "${AUDIO_PACKAGES[@]}"
   "${NETWORK_PACKAGES[@]}"
+  "${WAYLAND_SESSION_PACKAGES[@]}" # Added Wayland session packages
+  "${FONT_PACKAGES[@]}" # Added font packages
   "${UTILITY_PACKAGES[@]}"
   "${BLUETOOTH_PACKAGES[@]}"
 )

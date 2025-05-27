@@ -7,8 +7,8 @@ set -euo pipefail
 
 # === CONFIGURATION ===
 
-KEY_DIR="/root/secureboot"
-KEY_NAME="db"
+KEY_DIR="/boot/efi/loader/keys"
+KEY_NAME="satyarch"
 DAYS_VALID=3650  # ~10 years
 
 # Check if running as root
@@ -44,7 +44,7 @@ generate_keys() {
 
   # Step 2: Create self-signed X.509 certificate
   openssl req -new -x509 -sha256 -days "$DAYS_VALID" \
-    -subj "/CN=Arch Secure Boot DB/" \
+    -subj "/CN=Satyanet Secure Boot DB/" \
     -key "$KEY_PATH" \
     -out "$CERT_PATH"
 
@@ -62,7 +62,7 @@ generate_keys() {
   echo "  Combined PEM: $PEM_PATH"
   echo
   echo "Important: The private key has been secured with chmod 600."
-  echo "   Keep your private key safe - it's used to sign your kernels!"
+  echo "   Keep your private key safe - it's used to sign the kernels!"
 }
 
 # === Usage ===

@@ -13,7 +13,7 @@
 . Need to sort all projects )
 
 #### SSD2 (Arch Linux)
-- root (300GiB) for Linux installation
+- root (500GiB) for Linux installation
 - home (rest) for home [- large data partition with Scratch to sort. -> Mark the ssd uuid . - nice to have opt to extend ssd life and optimize storage.{ocassional dumps to Windows}] -> will contain git repo. Videos. Photos.
 
 I am a Data mess!!! TBs of unstruct data! What the hell!!!! Archive and manage this shit better or nuke it man! Anyway carrying on
@@ -289,4 +289,5 @@ Create an educational, intentional README.md documenting:
 # Lessons
  - UKI_CMDLINE doesnt exist - pay attention to mkinitcpio preset and base settings.
  - loading requires btrfs in kernel
- - basic install systemd - update add arch entry to be something that is more like just adding systemd boot manager.
+ - basic install systemd - update add arch entry to be something that is more like just adding systemd boot manager
+ - Arch entry gets auto detected in systemd boot - trouble shoot later

@@ -22,22 +22,24 @@ MNT="/mnt"
 # compress=zstd: compression for btrfs subvolumes
 BTRFS_OPTS="noatime,space_cache=v2,ssd,compress=zstd"
 
+
+
+echo "Mounting additional subvolumes..."
+mount -o subvol=@,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/"
+
 # Create necessary directories
-mkdir -p "$MNT"
 mkdir -p "$MNT/boot/efi"
 mkdir -p "$MNT/home"
 mkdir -p "$MNT/.snapshots"
-mkdir -p "$MNT/scaredData"
+mkdir -p "$MNT/sacredData"
 mkdir -p "$MNT/var/cache/pacman/pkg"
 mkdir -p "$MNT/var/log"
 mkdir -p "$MNT/tmp"
 
 echo `ls -a $MNT`
 
-echo "Mounting additional subvolumes..."
-mount -o subvol=@,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/"
 mount -o subvol=@snapshots,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/.snapshots"
-mount -o subvol=@scaredData,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/scaredData"
+mount -o subvol=@sacredData,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/sacredData"
 mount -o subvol=@pkg,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/var/cache/pacman/pkg"
 mount -o subvol=@log,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/var/log"
 mount -o subvol=@tmp,"$BTRFS_OPTS" "$ROOT_PART" "$MNT/tmp"
