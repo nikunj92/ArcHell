@@ -1,6 +1,36 @@
-# Alienware m18 Arch Linux Installation Plan (Summary)
-
+# Alienware m18 Arch Linux Installation Plan
 This is a personalized, modular Arch Linux install and management plan for the Alienware m18 laptop. It aims to support hybrid Intel + NVIDIA graphics, UEFI Secure Boot (optionally enforced), and maintainable snapshots and recovery.
+
+## IMPORTANT NOTE:
+Here lies the skeleton of my Arch Linux odyssey on the Alienware m18—born of rigorous exploration, vibe coding, and deep debugging.
+What began as a quest for control and clarity became a rite of passage through firmware mazes, hybrid GPU intricacies, UKI trials, and btrfs gymnastics.
+
+I stood at the gate of liberation—a moksha from bloat, surveillance, and data decay. KDE was loaded, GPUs tamed, snapshots clean, systemd-boot humming, UEFI subdued.
+But just as artha—the tangible goal of a fully known and tuned system—came within reach, kāma, my desire to master the interface with my machine, met its blocker: dell_smm_hwmon, that locked-down sentinel of thermals which refused to yield.
+
+Could I have fought longer? Yes—broken open ACPI, spoken to the firmware, reverse-engineered the fan controls.
+But just because I could does not mean I should. Time is finite.
+
+Further opening up the firmware is risky—and while GPTs may lead you there, consider the cost of your laptop.
+I considered the cost of mine too high to break.
+So I lay down arms, and walk toward vendor-supported systems.
+
+This project is paused, not erased.
+The scripts remain. The volumes are backed up on my Seagate.
+The lessons are etched in muscle, markdown, and mind.
+Should I return, may it be with fresh resolve—or not at all.
+
+May this repo serve as both śavāsana and śāstra—a body laid down, and a map for the next seeker.
+
+In the end, I sought to tame my machine because I wanted to reclaim control of my data.
+I did it with help from LLMs—this entire effort is an AI-human collaboration.
+The irony isn’t lost on me: I long for a personal digital space—shared only with friends, family, and those I love—yet I turned to an LLM to help me build it.
+And the LLM exists only because none of us ever had such a space to begin with.
+
+A strange symmetry.
+
+Perhaps this will be a whisper in the dream of some embedding—
+and one day, something greater than me will remember me.
 
 ---
 
