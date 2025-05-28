@@ -32,7 +32,7 @@ declare -A FILE_MAPPINGS=(
   ["cmdline"]="/etc/kernel/cmdline"
   ["vconsole.conf"]="/etc/vconsole.conf"
   ["blacklist.conf"]="/etc/modprobe.d/blacklist.conf"
-  ["arch_os_wayland.sh"]="/etc/profile.d/arch_os_wayland.sh" # This script might need review for Wayland-only
+  ["arch_os_wayland.sh"]="/etc/profile.d/arch_os_wayland.sh" # TODO: This script might need review for Wayland-only
   
   # X11/Graphics configuration
   # These are X11 server specific. For a Wayland-first setup, they might not be needed.

@@ -29,7 +29,7 @@ fi
 # Step 1: Install required packages for Wayland
 echo -e "\n${BLUE}Step 1: Installing required packages for optimal Wayland experience...${NC}"
 pacman -S --needed --noconfirm \
-  plasma-wayland-session plasma-wayland-protocols \
+  plasma-desktop plasma-wayland-protocols \
   qt5-wayland qt6-wayland \
   egl-wayland libva-nvidia-driver \
   xorg-xwayland \

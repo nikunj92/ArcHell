@@ -271,7 +271,7 @@ check_dkms_status() {
     dkms status 2>/dev/null | sed 's/^/  /' || echo "  Could not query DKMS status."
     
     # Check for common issues with DKMS
-    if ! dkms status | grep -q "nvidia.*OK"; then
+    if ! dkms status | grep -q "nvidia.*installed"; then
       echo -e "  ${RED}✗ NVIDIA DKMS module not installed or not OK${RESET}"
       echo "    → Try reinstalling the NVIDIA driver or check DKMS logs."
     fi

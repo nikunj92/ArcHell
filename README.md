@@ -1,125 +1,185 @@
-# Arch Linux Installation Helper Scripts
+# Alienware m18 Arch Linux Installation Plan (Summary)
 
-A collection of shell scripts for Arch Linux installation, configuration, and maintenance on dual-drive systems (focused on Alienware m18).
-
-## System Layout
-
-These scripts are tailored for a specific drive setup:
-- `/dev/nvme0n1p1` - EFI System Partition (ESP)
-- `/dev/nvme1n1p1` - Btrfs root partition with subvolumes
-- `/dev/nvme1n1p2` - Home partition (ext4)
-
-## Scripts Overview
-
-### Installation & Setup
-
-- `partitions.sh` - nukes the drive and recreates the base layout
-- `mounter.sh` - Mounts btrfs root with subvolumes, separate /home, and ESP
-- `pacstrapper.sh` - Installs base system packages tailored for Alienware m18 (intel ucode, nvidia intel etc)
-- `systemd-booter.sh` - Installs systemd boot, adds entry point for systemd boot - reuse helpers made in efibootmgr_helper.sh - also needs comments regarding the files we need.
-
-### Secure Boot Configuration
-
-- `secureboot_keygen.sh` - Generates keys for secure boot
-- `sbsign_helper.sh` - Signs EFI files with secure boot keys
-- `keytool_helper.sh` - Assists with secure boot key enrollment
-
-### Boot Management
-
-- `efibootmgr_helper.sh` - UEFI boot entry management utilities
-
-### Display & Session Management
-
-- `displayuctl.sh` - Handles dynamic display configurations for Wayland (and X11 as fallback)
-- `sessionctl.sh` - Session launcher primarily for Wayland (X11 option available)
-- `gpumngrer.sh` - Manages GPU power states and environment settings with power profile integration, optimized for Wayland
-- `hybrid-status.sh` - Diagnostic tool (Wayland-focused) that analyzes hybrid graphics setup and suggests fixes
-
-### Filesystem Management
-
-- `btrfs_snapper.sh` - Manages Btrfs snapshots creation and retention
-
-## Dotfiles
-
-This repository includes a set of configuration files ("dotfiles") for Xorg, systemd-boot, mkinitcpio, and GPU hybrid setups. These files are located in the `dotfiles/` directory and are intended to be copied to their respective system locations after installation.
-
-### Xorg Configuration
-
-- **Note**: With a Wayland-first approach, these X11 server-specific configurations (`10-modesetting.conf`, `10-nvidia-prime.conf`, `20-server-layout.conf`) may not be necessary. XWayland provides compatibility for X11 applications within a Wayland session. They are kept in dotfiles for reference or fallback scenarios but are not actively deployed by default in a strict Wayland setup.
-
-- **10-modesetting.conf**  
-  `/etc/X11/xorg.conf.d/10-modesetting.conf`  
-  Configures the Intel GPU to use the `modesetting` driver for Xorg.
-
-- **10-nvidia-prime.conf**  
-  `/etc/X11/xorg.conf.d/10-nvidia-prime.conf`  
-  Configures the NVIDIA GPU for PRIME offloading and hybrid graphics.
-
-- **20-server-layout.conf**  
-  `/etc/X11/xorg.conf.d/20-server-layout.conf`  
-  Sets the Intel GPU as the default screen for Xorg sessions.
-
-### Bootloader (systemd-boot) Entries
-
-- **loader.conf**  
-  `/boot/efi/loader/loader.conf`  
-  Sets the default boot entry, timeout, and console options.
-
-- **satyanet.conf**  
-  `/boot/efi/loader/entries/satyanet.conf`  
-  Main Arch Linux boot entry (Unified Kernel Image).
-
-- **satyanet-fallback.conf**  
-  `/boot/efi/loader/entries/satyanet-fallback.conf`  
-  Fallback boot entry using traditional kernel/initramfs.
-
-- **windows.conf**  
-  `/boot/efi/loader/entries/windows.conf`  
-  Boot entry for Windows 11.
-
-### Initramfs and Kernel
-
-- **mkinitcpio.conf**  
-  `/etc/mkinitcpio.conf`  
-  Preloads GPU modules and sets up hooks for early boot, systemd, and encryption.
-
-- **linux-uki.preset**  
-  `/etc/mkinitcpio.d/linux-uki.preset`  
-  Preset for building a Unified Kernel Image (UKI) and fallback images.
-
-- **cmdline**  
-  `/etc/kernel/cmdline`  
-  Kernel command line parameters for root device, subvolume, and boot options including NVIDIA modules (`nvidia-drm.modeset=1`).
-
-### GPU and Hybrid Graphics
-
-- **blacklist.conf**  
-  `/etc/modprobe.d/blacklist.conf`  
-  Blacklists the Nouveau driver (and other legacy modules - commented out) to avoid conflicts.
-
-- **99-wayland.conf**  
-  `~/.config/environment.d/99_wayland.conf` (or system-wide in `/etc/environment.d/`)
-  Environment variables for Wayland + NVIDIA hybrid mode with G-SYNC and VRR support.
-
-### Wayland Autostart
-
-- **arch_os_wayland.sh**  
-  `/etc/profile.d/arch_os_wayland.sh`  
-  Auto-starts Plasma Wayland session on tty1.
+This is a personalized, modular Arch Linux install and management plan for the Alienware m18 laptop. It aims to support hybrid Intel + NVIDIA graphics, UEFI Secure Boot (optionally enforced), and maintainable snapshots and recovery.
 
 ---
 
-## Note: 
-Copy these files to their respective locations as root after installation. Adjust UUIDs and device paths as needed for the system. See install_guide.md
+## Project Structure
 
-## Documentation
+```
+ArchHelperLLMAssisted/
+│
+├── scripts/                # All executable scripts (install, backup, helpers, etc.)
+│   ├── install/            # Installation and setup scripts
+│   ├── graphics/           # GPU, hybrid, and display management scripts
+│   ├── backup/             # Backup and snapshot scripts
+│   ├── system/             # System utilities (fan, thermal, session, etc.)
+│   └── helpers/            # Helper scripts (keytool, efibootmgr, etc.)
+│
+├── dotfiles/               # All dotfiles and system config templates
+│
+├── docs/                   # All documentation and guides
+│
+├── README.md               # Main project overview and structure
+└── .gitignore
+```
 
-The system includes detailed documentation:
+- All scripts are now grouped by function for clarity and maintainability.
+- All documentation is in `docs/`.
+- All system config templates are in `dotfiles/`.
 
-- **graphics_guide.md** - Comprehensive guide to the hybrid graphics setup
-- **README_OR_DONT.md** - Installation plan and detailed task list
-- **README_REALLY** - LLM feedback and areas of improvement
+See `docs/` for detailed guides and usage instructions for each script group.
 
-## Security Note
+---
 
-This setup is for my personal arch. Some scripts may require root privileges. Some wipe drives. Review the code before execution. I take no responsibility for any damage caused - use at your own risk
+## 1. Disk Layout and Boot Plan
+
+**SSD1 (Windows)**
+- Contains the original ESP (ESP1) with the Microsoft/Dell bootloader.
+- Preserve this ESP as backup fallback — don’t break it.
+- Bootloader entries are added manually; Secure Boot experiments begin after base setup.
+
+**SSD2 (Arch Linux)**
+- 300GiB for Btrfs root.
+- Remaining space for `/home` (ext4) — stores videos, photos, Git repos, and audit folders like Scratch.
+
+> **TODO:** Audit old HDDs, migrate or nuke stale data, structure projects. Organize Scratch → Courses, Code → gitify, etc.
+
+---
+
+## 2. Mount Plan
+
+| Mount Point                | Partition / Subvol   | FS     |
+|----------------------------|---------------------|--------|
+| `/boot/efi`                | ESP2                | FAT32  |
+| `/`                        | subvol @            | Btrfs  |
+| `/home`                    | separate partition  | ext4   |
+| `/.snapshots`              | subvol @snapshots   | Btrfs  |
+| `/sacredData`              | subvol @sacredData  | Btrfs  |
+| `/var/cache/pacman/pkg`    | subvol @pkg         | Btrfs  |
+| `/var/log`                 | subvol @log         | Btrfs  |
+| `/tmp`                     | subvol @tmp         | Btrfs  |
+
+---
+
+## 3. Base System Install
+
+**Example pacstrap Command:**
+```bash
+pacstrap /mnt \
+  base linux linux-firmware mkinitcpio btrfs-progs \
+  intel-ucode sof-firmware alsa-utils alsa-ucm-conf pipewire wireplumber \
+  mesa vulkan-intel libva-intel-driver libva-utils \
+  nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings \
+  networkmanager iwd \
+  git sudo vim efibootmgr dosfstools man-db man-pages \
+  lsof rsync htop unzip tar
+```
+> Plasma, Xorg, SDDM, etc. are deferred to desktop setup.
+
+---
+
+## 4. Bootloader: systemd-boot + UKI
+
+**UKI Composition**
+- Kernel: vmlinuz
+- Initramfs: built by mkinitcpio
+- Kernel cmdline: from `/etc/kernel/cmdline`
+- Output: `.efi` image
+
+**Example Signing & Setup**
+```bash
+mkinitcpio -p linux-uki
+bsign --key db.key --cert db.crt --output /boot/efi/EFI/Linux/arch-linux.efi
+```
+```bash
+efibootmgr --create --disk /dev/nvme1n1 --part 1 \
+  --label "Arch Linux" \
+  --loader /EFI/Linux/arch-linux.efi
+```
+- `bootctl install && bootctl update` for systemd-boot management.
+
+---
+
+## 5. Post-install: Network, Snapshot, GUI
+
+```bash
+# Enable networking
+systemctl enable NetworkManager
+
+# Initial snapshot
+btrfs subvolume snapshot -r / /.snapshots/root-$(date +%F-%H%M)
+
+# Proceed to GUI setup
+```
+
+---
+
+## 6. Recovery Mount Order
+
+```bash
+mount -o subvol=@ /dev/nvme1n1pX /mnt
+mount -o subvol=@snapshots /dev/nvme1n1pX /mnt/.snapshots
+mount -o subvol=@sacredData /dev/nvme1n1pX /mnt/sacredData
+mount -o subvol=@pkg /dev/nvme1n1pX /mnt/var/cache/pacman/pkg
+mount -o subvol=@log /dev/nvme1n1pX /mnt/var/log
+mount -o subvol=@tmp /dev/nvme1n1pX /mnt/tmp
+mount /dev/nvme1n1pY /mnt/home
+mount /dev/nvme1n1pZ /mnt/boot/efi
+arch-chroot /mnt
+```
+
+---
+
+## 7. Script Index
+
+Scripts are grouped into folders under `scripts/`:
+
+- **Installation:** `partitions.sh`, `mounter.sh`, `pacstrapper.sh`, `systemd-booter.sh`
+- **Secure Boot:** `secureboot_keygen.sh`, `sbsign_helper.sh`, `keytool_helper.sh`
+- **Boot Management:** `efibootmgr_helper.sh`
+- **Display & Hybrid GPU:** `displayuctl.sh`, `sessionctl.sh`, `gpumngrer.sh`, `hybrid-status.sh`
+- **Filesystem:** `btrfs_snapper.sh`
+
+---
+
+## 8. Dotfiles
+
+Found in `dotfiles/`, including:
+
+- **X11:** `10-modesetting.conf`, `10-nvidia-prime.conf`
+- **Bootloader:** `loader.conf`, `satyanet.conf`, etc.
+- **Initramfs:** `mkinitcpio.conf`, `linux-uki.preset`, `cmdline`
+- **Wayland:** `99-wayland.conf`, `arch_os_wayland.sh`
+- **Modules:** `blacklist.conf`
+
+---
+
+## 9. Documentation
+
+See `docs/` for:
+
+- `graphics_guide.md` – GPU/Wayland/X11 configs
+- `hybrid-status-guide.md` – Diagnostic tool details
+- `install_guide.md` – Base install step-by-step
+
+---
+
+## 10. Data Strategy & Cleanup (WIP)
+
+- Use `du -h --max-depth=1`, `ncdu`, `fdupes`, `rdfind`
+- Classify folders: KEEP / ARCHIVE / DELETE / REVIEW
+- Backup sensitive data to external HDDs
+- Use `/mnt/backup` as staging area
+
+---
+
+## Final Objective
+
+A modular, maintainable, minimalist Linux system:
+
+- Wayland-first
+- Snapshot + rollback ready
+- Dev-ready hybrid graphics setup
+- Secure Boot optional, password protection default
+- Personal scripts, clean documentation

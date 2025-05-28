@@ -1,0 +1,13 @@
+# R Whats going on
+ * Got a working root - there is a few bugs in the dot files - need to make my repo source of truth updated with the source of truth in by arch
+ * Went and loaded the graphics with X11 - super finicky - installed a bunch of crap - lets roll back to base system.
+ * Next power control set up - prevent laptop from melting.
+ * Install wayland
+ * Add GUI
+
+ ## NOTES
+    Kernel Command Line for UKI:
+    Remember to create /etc/kernel/cmdline inside the chroot. For the NVIDIA hybrid setup, consider adding nvidia-drm.modeset=1 to this file, along with quiet splash if desired. Example for /etc/kernel/cmdline: root=UUID=ROOT_PARTITION_UUID rootflags=subvol=@ rw quiet splash nvidia-drm.modeset=1
+
+    Would be good to clean up the scripts too!
+    
